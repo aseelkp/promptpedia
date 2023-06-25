@@ -4,13 +4,20 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { signIn, signOut, useSession, getProviders } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 const Nav = () => {
   const { data: session } = useSession();
+  const route = useRouter();
 
   const [providers, setProviders] = useState(null);
   const [toggleDropDown, setToggleDropDown] = useState(false);
 
+  const signOutHandle = () => {
+    toggleDropDown && setToggleDropDown(false);
+    route.push("/");
+    signOut();
+  }
   useEffect(() => {
     const setUpProviders = async () => {
       const response = await getProviders();
@@ -39,7 +46,7 @@ const Nav = () => {
               Create Prompt
             </Link>
 
-            <button type="button" onClick={signOut} className="outline_btn">
+            <button type="button" onClick={signOutHandle} className="outline_btn">
               Sign Out
             </button>
 
@@ -102,10 +109,7 @@ const Nav = () => {
                 <button
                   type="button"
                   className="dropdown_item"
-                  onClick={() => {
-                    setToggleDropDown(false);
-                    signOut();
-                  }}
+                  onClick={signOutHandle}
                 >
                   Sign Out
                 </button>
